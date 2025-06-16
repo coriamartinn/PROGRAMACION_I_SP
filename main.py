@@ -29,7 +29,8 @@ def main() -> None:
     titulo = pg.display.set_caption(
         "Batalla naval"
     )  # -> TITULO DEL EJECUTABLE (DEL JUEGO)
-    # icono = pg.display.set_icon() # -> ICONO DEL JUEGO
+    icono_surface = pg.image.load("estaticos/imagenes/icono.png")
+    pg.display.set_icon(icono_surface)  # -> ICONO DEL JUEGO
 
     # CREACION DE IMAGEN -> (FONDO)
     fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
