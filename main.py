@@ -1,4 +1,5 @@
 import pygame as pg
+import pygame.mixer as mixer
 
 from paquetes.interfaces import interfaz_jugar, interfaz_puntajes, menu
 from paquetes.tablero import crear_tablero_con_naves
@@ -10,9 +11,14 @@ def main() -> None:
     Esta funcion realiza la ejecucion del juego de una forma mas ordenada
     """
 
-    # Inicializamos juego
+    # Inicializamos juego y musica
     pg.init()
+    mixer.init()
 
+    # Ordenamos musica
+    sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
+    sonido.set_volume(0.4)
+    sonido.play(-1)
     # variables
     estado = "MENU"
     padding_x = 15
