@@ -57,7 +57,6 @@ def main() -> None:
         if estado == "MENU":
             rects = menu(pantalla)
 
-        # INTERFACES DE USUARIO
         match estado:
             case "JUGAR":
                 interfaz_jugar(pantalla)
@@ -66,6 +65,7 @@ def main() -> None:
             case "SALIR":
                 pg.quit()
                 quit()
+        # INTERFACES DE USUARIO
 
         pg.display.flip()  # -> Actualizacion de pantalla
 

@@ -56,18 +56,29 @@ def crear_tablero_con_naves():
     return tablero
 
 
-def imprimir_tablero(pantalla, tablero):
+def imprimir_tablero(pantalla):
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 45)
+    
+    margen_izquierdo = 40
+    margen_arriba = 40
+    tamano_celda = 40
+    tablero = crear_tablero_con_naves()
     #print(type(tablero))
     for fila in range(len(tablero)):
-        y = fila * 15 + 5
         for columna in range(len(tablero)):
-            x = columna * 15 + 5
-            posicion_celda = (x, y)
-            superficie_tablero = fuente.render("", True, (0, 0, 0))
-            rect_tablero = superficie_tablero.get_rect()
-            rect_tablero.center = (400, 200)
-            pg.draw.rect(pantalla, (0, 0, 255), (x, y, 40, 40))
-            pantalla.blit(superficie_tablero, (x+5, y+5))
+            calcular_x = margen_izquierdo + columna * tamano_celda
+            calcular_y = margen_arriba + fila * tamano_celda
+
+            if tablero[fila][columna] == 1:
+                color_celda = (0, 0, 255)
+            else:
+                color_celda = (200, 200, 255)
+                
+            pg.draw.rect(pantalla, color_celda, (calcular_x, calcular_y, tamano_celda, tamano_celda))
+            
+            pg.draw.rect(pantalla, (0, 0, 0), (calcular_x, calcular_y, tamano_celda, tamano_celda), 1)
+            
+        
+            
         

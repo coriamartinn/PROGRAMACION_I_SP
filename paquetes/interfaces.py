@@ -90,7 +90,7 @@ def interfaz_jugar(pantalla: pg.display) -> None:
         None: No existe retorno
     """
     tablero = crear_tablero_con_naves()
-    imprimir_tablero(pantalla, tablero)
+    imprimir_tablero(pantalla)
 
 
 def interfaz_puntajes(pantalla: pg.display) -> None:
