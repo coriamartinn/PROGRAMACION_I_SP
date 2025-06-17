@@ -76,7 +76,6 @@ def imprimir_tablero(pantalla):
                 color_celda = (200, 200, 255)
                 
             pg.draw.rect(pantalla, color_celda, (calcular_x, calcular_y, tamano_celda, tamano_celda))
-            
             pg.draw.rect(pantalla, (0, 0, 0), (calcular_x, calcular_y, tamano_celda, tamano_celda), 1)
             
         
