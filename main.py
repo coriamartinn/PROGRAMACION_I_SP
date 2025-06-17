@@ -1,8 +1,8 @@
 import pygame as pg
 import pygame.mixer as mixer
 
-from paquetes.interfaces import interfaz_jugar, interfaz_nivel, interfaz_puntajes, menu
-from paquetes.tablero import crear_tablero_con_naves
+from paquetes.interfaces import *
+from paquetes.tablero import *
 from paquetes.validates import verificar_estado
 
 
@@ -17,7 +17,7 @@ def main() -> None:
 
     # Ordenamos musica
     sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
-    sonido.set_volume(0.4)
+    sonido.set_volume(0)
     sonido.play(-1)
     # variables
     estado = "MENU"
@@ -25,9 +25,10 @@ def main() -> None:
     padding_x = 15
     padding_y = 15
     musica_activada = True
-
+    clock = pg.time.Clock()
+    tablero_actual = None
     # CONFIGURACION DE PANTALLA
-    DIMENSIONES = (800, 600)
+    DIMENSIONES = (1024, 768)
     pantalla = pg.display.set_mode(DIMENSIONES)
     titulo = pg.display.set_caption(
         "Batalla naval"
@@ -37,7 +38,7 @@ def main() -> None:
 
     # CREACION DE IMAGEN -> (FONDO)
     fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
-    fondo = pg.transform.scale(fondo, (800, 600))
+    fondo = pg.transform.scale(fondo, DIMENSIONES)
 
     # BUCLE PRINCIPAL DEL JUEGO
     while True:
@@ -48,9 +49,11 @@ def main() -> None:
 
             if evento.type == pg.MOUSEBUTTONDOWN:
                 posicion_click = evento.pos
+                print(posicion_click)
                 if estado == "MENU":
                     if rect_jugar.collidepoint(posicion_click):
                         estado = "JUGAR"
+                        #tablero_actual = crear_tablero_con_naves(nivel_actual)
                     elif rect_nivel.collidepoint(posicion_click):
                         estado = "NIVEL"
                     elif rect_puntajes.collidepoint(posicion_click):
@@ -88,6 +91,7 @@ def main() -> None:
                 if pg.mouse.get_pressed()[0]:
                     if rect_volver.collidepoint(pg.mouse.get_pos()):
                         estado = "MENU"
+                        tablero_actual = None
             case "PUNTAJES":
                 interfaz_puntajes(pantalla)
             case "SALIR":
@@ -96,6 +100,7 @@ def main() -> None:
             case "NIVEL":
                 rect_facil, rect_medio, rect_dificil = interfaz_nivel(pantalla)
 
+        clock.tick(60)
         pg.display.flip()
 
 

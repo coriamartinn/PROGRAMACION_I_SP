@@ -34,11 +34,11 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     rect_musica = superficie_musica.get_rect()
 
     # Centrar posiciones
-    rect_jugar.center = (400, 150)
-    rect_nivel.center = (400, 210)
-    rect_puntajes.center = (400, 270)
-    rect_salir.center = (400, 330)
-    rect_musica.center = (737, 562)
+    rect_jugar.center = (512, 284)
+    rect_nivel.center = (512, 384)
+    rect_puntajes.center = (512, 484)
+    rect_salir.center = (512, 584)
+    rect_musica.center = (959, 726)
 
     # Fondos con padding
     fondo_jugar = pg.Rect(rect_jugar.left - padding_x, rect_jugar.top - padding_y, rect_jugar.width + 2*padding_x, rect_jugar.height + 2*padding_y)
@@ -67,7 +67,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
 
 
 
-def interfaz_jugar(pantalla: pg.display, nivel="FACIL") -> None:
+def interfaz_jugar(pantalla: pg.display, nivel="FACIL",) -> None:
     """
     Esta funcion se encarga de dibujar en pantalla la interfaz del interfaz principal
     Args:
@@ -119,9 +119,9 @@ def interfaz_puntajes(pantalla: pg.display) -> None:
     rect_salir = superficie_salir.get_rect()
 
     # Centro la posicion de la superficie ->(texto creado)
-    rect_jugar.center = (400, 150)
-    rect_puntaje.center = (400, 250)
-    rect_salir.center = (400, 350)
+    rect_jugar.center = (512, 384)
+    rect_puntaje.center = (512, 484)
+    rect_salir.center = (512, 584)
 
     pantalla.blit(superficie_jugar, rect_jugar)
     pantalla.blit(superficie_puntaje, rect_puntaje)
