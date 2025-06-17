@@ -1,11 +1,11 @@
 import pygame as pg
 import pygame.mixer as mixer
 
-from paquetes.interfaces import interfaz_jugar, interfaz_puntajes, menu
+from paquetes.interfaces import *
 from paquetes.tablero import crear_tablero_con_naves
 from paquetes.validates import verificar_estado
 
-
+nivel_actual= "FACIL"
 def main() -> None:
     """
     Esta funcion realiza la ejecucion del juego de una forma mas ordenada
@@ -46,21 +46,33 @@ def main() -> None:
             # EVENTO PARA VERIFICAR QUE INTERFAZ SE DEBE MOSTRAR SEGUN EL CLICK
             if evento.type == pg.MOUSEBUTTONDOWN:
                 posicion_click = evento.pos
-                print(posicion_click)
-                estado = verificar_estado(rects, posicion_click)
-                print(estado)
+                if estado == "MENU":
+                    estado = verificar_estado(rects, posicion_click)
+                elif estado == "NIVEL":
+                    if rect_facil.collidepoint(posicion_click):
+                        nivel_actual = "FACIL"
+                        estado = "MENU"
+                    elif rect_medio.collidepoint(posicion_click):
+                        nivel_actual = "MEDIO"
+                        estado = "MENU"
+                    elif rect_dificil.collidepoint(posicion_click):
+                        nivel_actual = "DIFICIL"
+                        estado = "MENU"
 
         # ACTUALIZACION DEL FONDO
         # pantalla.fill((255, 255, 255))  # BLANCO
         pantalla.blit(fondo, (0, 0))
         # MENU PRINCIPAL
         if estado == "MENU":
-            rects = menu(pantalla)
+            rect_jugar, rect_nivel, rect_puntajes, rect_salir = menu(pantalla)
+            rects = (rect_jugar, rect_nivel, rect_puntajes, rect_salir)
 
         # INTERFACES DE USUARIO
         match estado:
             case "JUGAR":
-                interfaz_jugar(pantalla)
+                interfaz_jugar(pantalla, nivel_actual)
+            case "NIVEL":
+                 rect_facil, rect_medio, rect_dificil = interfaz_nivel(pantalla)
             case "PUNTAJES":
                 interfaz_puntajes(pantalla)
             case "SALIR":
