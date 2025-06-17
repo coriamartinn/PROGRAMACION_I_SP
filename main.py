@@ -1,7 +1,7 @@
 import pygame as pg
 import pygame.mixer as mixer
 
-from paquetes.interfaces import interfaz_jugar, interfaz_puntajes, menu
+from paquetes.interfaces import interfaz_jugar, interfaz_nivel, interfaz_puntajes, menu
 from paquetes.tablero import crear_tablero_con_naves
 from paquetes.validates import verificar_estado
 
@@ -21,8 +21,11 @@ def main() -> None:
     sonido.play(-1)
     # variables
     estado = "MENU"
+    nivel_actual = "FACIL"  # Nivel por defecto
     padding_x = 15
     padding_y = 15
+    musica_activada = True
+
     # CONFIGURACION DE PANTALLA
     DIMENSIONES = (800, 600)
     pantalla = pg.display.set_mode(DIMENSIONES)
@@ -39,35 +42,61 @@ def main() -> None:
     # BUCLE PRINCIPAL DEL JUEGO
     while True:
         for evento in pg.event.get():
-            # EVENTO DE CIERRE PREDETERMINADO
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
-            # EVENTO PARA VERIFICAR QUE INTERFAZ SE DEBE MOSTRAR SEGUN EL CLICK
+
             if evento.type == pg.MOUSEBUTTONDOWN:
                 posicion_click = evento.pos
-                print(posicion_click)
-                estado = verificar_estado(rects, posicion_click)
-                print(estado)
+                if estado == "MENU":
+                    if rect_jugar.collidepoint(posicion_click):
+                        estado = "JUGAR"
+                    elif rect_nivel.collidepoint(posicion_click):
+                        estado = "NIVEL"
+                    elif rect_puntajes.collidepoint(posicion_click):
+                        estado = "PUNTAJES"
+                    elif rect_salir.collidepoint(posicion_click):
+                        estado = "SALIR"
+                    elif rect_musica.collidepoint(posicion_click):
+                        if musica_activada:
+                            mixer.pause()
+                            musica_activada = False
+                        else:
+                            mixer.unpause()
+                            musica_activada = True
+                elif estado == "NIVEL":
+                    if rect_facil.collidepoint(posicion_click):
+                        nivel_actual = "FACIL"
+                        estado = "MENU"
+                    elif rect_medio.collidepoint(posicion_click):
+                        nivel_actual = "MEDIO"
+                        estado = "MENU"
+                    elif rect_dificil.collidepoint(posicion_click):
+                        nivel_actual = "DIFICIL"
+                        estado = "MENU"
 
-        # ACTUALIZACION DEL FONDO
-        # pantalla.fill((255, 255, 255))  # BLANCO
         pantalla.blit(fondo, (0, 0))
-        # MENU PRINCIPAL
+
         if estado == "MENU":
-            rects = menu(pantalla)
+            rect_jugar, rect_nivel, rect_puntajes, rect_salir, rect_musica = menu(
+                pantalla, nivel_actual
+            )
 
         match estado:
             case "JUGAR":
-                interfaz_jugar(pantalla)
+                rect_volver = interfaz_jugar(pantalla, nivel_actual)
+                if pg.mouse.get_pressed()[0]:
+                    if rect_volver.collidepoint(pg.mouse.get_pos()):
+                        estado = "MENU"
             case "PUNTAJES":
                 interfaz_puntajes(pantalla)
             case "SALIR":
                 pg.quit()
                 quit()
-        # INTERFACES DE USUARIO
+            case "NIVEL":
+                rect_facil, rect_medio, rect_dificil = interfaz_nivel(pantalla)
 
-        pg.display.flip()  # -> Actualizacion de pantalla
+        pg.display.flip()
 
 
 main()  # llamado a la ejecución
