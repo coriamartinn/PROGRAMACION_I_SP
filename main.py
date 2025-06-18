@@ -3,6 +3,8 @@ import pygame.mixer as mixer
 
 from paquetes.interfaces import *
 from paquetes.tablero import *
+
+# from paquetes.usuario import *
 from paquetes.validates import verificar_estado
 
 
@@ -17,17 +19,9 @@ def main() -> None:
 
     # Ordenamos musica
     sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
-    sonido.set_volume(0) # PONER VOLUMEN 0.4
+    sonido.set_volume(0)  # PONER VOLUMEN 0.4
     sonido.play(-1)
-    
-    # variables
-    estado = "MENU"
-    nivel_actual = "FACIL"  # Nivel por defecto
-    padding_x = 15
-    padding_y = 15
-    musica_activada = True
-    clock = pg.time.Clock()
-    tablero_actual = None
+
     # CONFIGURACION DE PANTALLA
     DIMENSIONES = (1024, 768)
     pantalla = pg.display.set_mode(DIMENSIONES)
@@ -36,6 +30,19 @@ def main() -> None:
     )  # -> TITULO DEL EJECUTABLE (DEL JUEGO)
     icono_surface = pg.image.load("estaticos/imagenes/icono.png")
     pg.display.set_icon(icono_surface)  # -> ICONO DEL JUEGO
+
+    # variables
+    estado = "MENU"
+    nivel_actual = "FACIL"  # Nivel por defecto
+    musica_activada = True
+    clock = pg.time.Clock()
+    tablero_actual = None
+    tablero_disparos = None
+    rect_reiniciar = None
+    nombre_jugador = ""  # inicia vacio
+    puntaje_jugador = 0  # inicia en 0 -> (puede bajar a negativo)
+    puntaje_jugador_vivo = 0
+    click_procesado = False
 
     # CREACION DE IMAGEN -> (FONDO)
     fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
@@ -48,13 +55,29 @@ def main() -> None:
                 pg.quit()
                 quit()
 
-            if evento.type == pg.MOUSEBUTTONDOWN:
+            if estado == "NOMBRE":
+                # Manejar ingreso de texto
+                if evento.type == pg.KEYDOWN:
+                    if evento.key == pg.K_BACKSPACE:
+                        nombre_jugador = nombre_jugador[:-1]
+                    elif evento.key == pg.K_RETURN:
+                        # Termina ingreso si tiene 3 letras
+                        if len(nombre_jugador) == 3:
+                            estado = "JUGAR"
+                            tablero_actual = None
+                            tablero_disparos = None
+                    else:
+                        if len(nombre_jugador) < 3 and evento.unicode.isalpha():
+                            nombre_jugador += evento.unicode.upper()
+
+            if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
+                click_procesado = False
                 posicion_click = evento.pos
                 print(posicion_click)
                 if estado == "MENU":
-                    if rect_jugar.collidepoint(posicion_click):
-                        estado = "JUGAR"
-                        #tablero_actual = crear_tablero_con_naves(nivel_actual)
+                    if rect_jugar and rect_jugar.collidepoint(posicion_click):
+                        estado = "NOMBRE"
+                        nombre_jugador = ""  # Reseteo de nombre
                     elif rect_nivel.collidepoint(posicion_click):
                         estado = "NIVEL"
                     elif rect_puntajes.collidepoint(posicion_click):
@@ -68,6 +91,7 @@ def main() -> None:
                         else:
                             mixer.unpause()
                             musica_activada = True
+
                 elif estado == "NIVEL":
                     if rect_facil.collidepoint(posicion_click):
                         nivel_actual = "FACIL"
@@ -87,12 +111,66 @@ def main() -> None:
             )
 
         match estado:
+            case "NOMBRE":
+                pantalla.fill((0, 0, 0))
+                fuente = pg.font.SysFont("OCR A Extended", 50)
+                texto = fuente.render(
+                    f"Ingrese nombre (3 letras): {nombre_jugador}",
+                    True,
+                    (255, 255, 255),
+                )
+                rect_texto = texto.get_rect()
+                rect_texto.center = (512, 384)
+                pantalla.blit(texto, rect_texto)
+
             case "JUGAR":
-                rect_volver = interfaz_jugar(pantalla, nivel_actual)
-                if pg.mouse.get_pressed()[0]:
-                    if rect_volver.collidepoint(pg.mouse.get_pos()):
+                if tablero_actual is None:
+                    tablero_actual = crear_tablero_con_naves(nivel_actual)
+                    tablero_disparos = crear_tablero_vacio(len(tablero_actual))
+                rect_volver, rect_reiniciar = interfaz_jugar(
+                    pantalla,
+                    tablero_actual,
+                    tablero_disparos,
+                    puntaje_jugador,
+                    puntaje_jugador_vivo,
+                    nombre_jugador,
+                    nivel_actual,
+                )
+
+                # manejar disparos y verificar victoria
+                if (
+                    evento.type == pg.MOUSEBUTTONDOWN
+                    and evento.button == 1
+                    and not click_procesado
+                ):
+                    posicion = pg.mouse.get_pos()
+
+                    if rect_volver and rect_volver.collidepoint(posicion):
+                        pass
+                    elif rect_reiniciar and rect_reiniciar.collidepoint(posicion):
+                        pass
+                    else:
+                        puntaje = manejar_disparo(
+                            tablero_actual,
+                            tablero_disparos,
+                            posicion,
+                            pantalla.get_size(),
+                        )
+                        print(puntaje)
+                        if puntaje == 1:
+                            puntaje_jugador_vivo += 5
+                        elif puntaje == -1:
+                            puntaje_jugador_vivo -= 1
+                        else:
+                            puntaje_jugador_vivo += 0
+
+                    if verificar_victoria(tablero_actual, tablero_disparos):
+                        print("¡Ganaste!")
                         estado = "MENU"
                         tablero_actual = None
+                        tablero_disparos = None
+
+                    click_procesado = True
             case "PUNTAJES":
                 interfaz_puntajes(pantalla)
             case "SALIR":

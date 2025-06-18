@@ -1,7 +1,7 @@
 import random
+import string
 
 import pygame as pg
-
 
 NIVELES = {
     "FACIL": {
@@ -41,7 +41,7 @@ def crear_tablero_vacio(tamano):
         for _ in range(tamano):
             fila.append(0)
         tablero.append(fila)
-        
+
     return tablero
 
 
@@ -80,7 +80,7 @@ def crear_tablero_con_naves(nivel="FACIL"):
     if nivel == "FACIL":
         dificultad = NIVELES["FACIL"]
     elif nivel == "MEDIO":
-        dificultad = NIVELES["MEDIO"] 
+        dificultad = NIVELES["MEDIO"]
     elif nivel == "DIFICIL":
         dificultad = NIVELES["DIFICIL"]
 
@@ -95,22 +95,124 @@ def crear_tablero_con_naves(nivel="FACIL"):
     return tablero
 
 
-def imprimir_tablero(pantalla, tablero):
+def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
+        margen_izquierdo = 40
+        margen_arriba = 40
+        ancho_pantalla, alto_pantalla = dimension_pantalla
+        espacio_disponible_x = ancho_pantalla - 2 * margen_izquierdo
+        espacio_disponible_y = alto_pantalla - 2 * margen_arriba
+        tamano_celda = min(
+            espacio_disponible_x // len(tablero[0]), espacio_disponible_y // len(tablero)
+        )
+        puntaje = 0
+
+        x, y = posicion
+        columna = (x - margen_izquierdo) // tamano_celda
+        fila = (y - margen_arriba) // tamano_celda
+
+        if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
+            if tablero_disparos[fila][columna] == 0:
+                if tablero[fila][columna] == 1:
+                    tablero_disparos[fila][columna] = 1
+                    puntaje = 1
+                elif tablero[fila][columna] == 0:
+                    tablero_disparos[fila][columna] = -1
+                    puntaje = -1
+                else:
+                    puntaje = 0
+        
+        return puntaje
+
+
+def disparo_acertado(tablero: list, tablero_disparos: list, posicion, dimension_pantalla) -> bool:
+    """
+    """
+    acertado = False
+    margen_izquierdo = 40
+    margen_arriba = 40
+    ancho_pantalla, alto_pantalla = dimension_pantalla
+    espacio_disponible_x = ancho_pantalla - 2 * margen_izquierdo
+    espacio_disponible_y = alto_pantalla - 2 * margen_arriba
+    tamano_celda = min(
+        espacio_disponible_x // len(tablero[0]), espacio_disponible_y // len(tablero)
+    )
+
+    x, y = posicion
+    columna = (x - margen_izquierdo) // tamano_celda
+    fila = (y - margen_arriba) // tamano_celda
+    
+
+    if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
+        if tablero_disparos[fila][columna] == 0:
+            if tablero[fila][columna] == 1:
+                acertado = True
+    
+    return acertado
+
+def imprimir_tablero(pantalla, tablero,tablero_disparos=None):
+    if tablero_disparos is None:
+        tablero_disparos = crear_tablero_vacio(len(tablero))
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 45)
 
     margen_izquierdo = 40
     margen_arriba = 40
     ancho_pantalla, alto_pantalla = pantalla.get_size()
-    espacio_disponible_x = ancho_pantalla - 2 * margen_izquierdo
-    espacio_disponible_y = alto_pantalla - 2 * margen_arriba
-    tamano_celda = min(espacio_disponible_x // len(tablero[0]), espacio_disponible_y // len(tablero))
+    tamano_celda = min(
+        (ancho_pantalla - 2 * margen_izquierdo) // len(tablero[0]),
+        (alto_pantalla - 2 * margen_arriba) // len(tablero),
+    )
+
+    fuente = pg.font.SysFont("Arial", tamano_celda // 2)
+    # Dibujar números columnas arriba
+    for col in range(len(tablero[0])):
+        numero = str(col + 1)
+        texto_numero = fuente.render(numero, True, (255, 255, 255))
+        x = (
+            margen_izquierdo
+            + col * tamano_celda
+            + tamano_celda // 2
+            - texto_numero.get_width() // 2
+        )
+        y = margen_arriba // 2 - texto_numero.get_height() // 2
+        pantalla.blit(texto_numero, (x, y))
+
+    # Letras filas a la izquierda
+    letras = string.ascii_uppercase
+    for fila in range(len(tablero)):
+        letra = letras[fila] if fila < len(letras) else "?"
+        texto_letra = fuente.render(letra, True, (255, 255, 255))
+        x = margen_izquierdo // 2 - texto_letra.get_width() // 2
+        y = (
+            margen_arriba
+            + fila * tamano_celda
+            + tamano_celda // 2
+            - texto_letra.get_height() // 2
+        )
+        pantalla.blit(texto_letra, (x, y))
+
     for fila in range(len(tablero)):
         for columna in range(len(tablero[0])):
             calcular_x = margen_izquierdo + columna * tamano_celda
             calcular_y = margen_arriba + fila * tamano_celda
 
+
             color_celda = (200, 200, 255)
-                
-            pg.draw.rect(pantalla,color_celda,(calcular_x, calcular_y, tamano_celda, tamano_celda))
-            pg.draw.rect(pantalla,(0, 0, 0),(calcular_x, calcular_y, tamano_celda, tamano_celda),1)
+            if tablero_disparos[fila][columna] == 1:
+                    color_celda = (255, 0, 0) # impacto (rojo)
+            elif tablero_disparos[fila][columna] == -1:
+                    color_celda = (0, 0, 255) # agua (azul)
+
+            
+            
+            pg.draw.rect(
+                pantalla,
+                color_celda,
+                (calcular_x, calcular_y, tamano_celda, tamano_celda),
+            )
+            pg.draw.rect(
+                pantalla,
+                (0, 0, 0),
+                (calcular_x, calcular_y, tamano_celda, tamano_celda),
+                1,
+            )

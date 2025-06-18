@@ -1,10 +1,6 @@
 import pygame as pg
-
-
 from paquetes.tablero import *
-
-
-import pygame as pg
+from paquetes.validates import *
 
 def menu(pantalla: pg.display, nivel_actual="FACIL"):
     jugar = "Jugar"
@@ -65,9 +61,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     # Retornamos todos los rects para control de clics
     return rect_jugar, rect_nivel, rect_puntajes, rect_salir, rect_musica
 
-
-
-def interfaz_jugar(pantalla: pg.display, nivel="FACIL",) -> None:
+def interfaz_jugar(pantalla: pg.display,tablero: list, tablero_disparos: list,puntaje_jugador: int, puntaje_jugador_vivo: int, nombre_jugador, nivel="FACIL") -> None:
     """
     Esta funcion se encarga de dibujar en pantalla la interfaz del interfaz principal
     Args:
@@ -77,23 +71,42 @@ def interfaz_jugar(pantalla: pg.display, nivel="FACIL",) -> None:
     """
     if nivel != "FACIL" and nivel != "MEDIO" and nivel != "DIFICIL":
         nivel = "FACIL"
-    tablero = crear_tablero_con_naves(nivel)
-    imprimir_tablero(pantalla, tablero)
+    if tablero is None:
+        tablero = crear_tablero_con_naves(nivel)
+    if tablero_disparos is None:
+        tablero_disparos = crear_tablero_vacio(len(tablero))
+    
+    imprimir_tablero(pantalla, tablero, tablero_disparos)
      # Crear botón "Volver"
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 30)
     texto_volver = fuente.render("Volver", True, (255, 255, 255))
-    rect_volver = texto_volver.get_rect(center=(955, 730))
+    rect_volver = texto_volver.get_rect(center=(950, 738))
     fondo_volver = pg.Rect(
         rect_volver.left - 10, rect_volver.top - 10,
         rect_volver.width + 20, rect_volver.height + 20
     )
-
     pg.draw.rect(pantalla, (88, 6, 6), fondo_volver, border_radius=12)
     pantalla.blit(texto_volver, rect_volver)
+    
+    # Mostrar nombre jugador en pantalla
+    fuente_nombre = pg.font.SysFont("OCR A Extended", 30)
+    texto_nombre = fuente_nombre.render(f"Jugador: {nombre_jugador}", True, (255, 255, 255))
+    pantalla.blit(texto_nombre, (737, 12))
 
-    return fondo_volver
+    # Mostrar Puntajes en vivo
+    fuente_puntaje = pg.font.SysFont("OCR A Extended", 50)
+    texto_puntaje = fuente_puntaje.render(f"PUNTAJE: {puntaje_jugador}{puntaje_jugador}{puntaje_jugador}{puntaje_jugador_vivo}", True, (255, 255, 255))
+    pantalla.blit(texto_puntaje, (754, 60))
+    
+    # Botón Reiniciar
+    texto_reiniciar = fuente.render("Reiniciar", True, (255, 255, 255))
+    rect_reiniciar = texto_reiniciar.get_rect(center=(839, 738))
+    fondo_reiniciar = pg.Rect(rect_reiniciar.left - 10, rect_reiniciar.top - 10, rect_reiniciar.width + 20, rect_reiniciar.height + 20)
+    pg.draw.rect(pantalla, (6, 88, 6), fondo_reiniciar, border_radius=12)
+    pantalla.blit(texto_reiniciar, rect_reiniciar)
 
+    return fondo_volver, fondo_reiniciar
 
 def interfaz_puntajes(pantalla: pg.display) -> None:
     """
@@ -103,9 +116,8 @@ def interfaz_puntajes(pantalla: pg.display) -> None:
     Returns:
         None: No existe retorno
     """
-    jugar = "PRUEBA2"
-    puntaje = "Prueba2"
-    salir = "Saliraa2"
+    puntaje = "Puntajes"
+    
 
     pg.font.init()
     fuente = pg.font.SysFont("Arial", 45)
@@ -173,3 +185,4 @@ def mostrar_selector_nivel(pantalla: pg.Surface) -> tuple:
         y += 100
 
     return rects["FACIL"], rects["MEDIO"], rects["DIFICIL"]
+

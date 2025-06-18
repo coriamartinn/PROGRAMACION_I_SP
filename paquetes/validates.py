@@ -26,3 +26,12 @@ def verificar_estado(areas: tuple, posicion_click: tuple) -> str:
         estado = "SALIR"
         
     return estado
+
+
+def verificar_victoria(tablero, tablero_disparos):
+    victoria = True
+    for fila in range(len(tablero)):
+        for col in range(len(tablero[0])):
+            if tablero[fila][col] == 1 and tablero_disparos[fila][col] == 0:
+                victoria = False
+    return victoria
