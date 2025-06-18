@@ -17,8 +17,9 @@ def main() -> None:
 
     # Ordenamos musica
     sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
-    sonido.set_volume(0)
+    sonido.set_volume(0) # PONER VOLUMEN 0.4
     sonido.play(-1)
+    
     # variables
     estado = "MENU"
     nivel_actual = "FACIL"  # Nivel por defecto

@@ -83,7 +83,7 @@ def interfaz_jugar(pantalla: pg.display, nivel="FACIL",) -> None:
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 30)
     texto_volver = fuente.render("Volver", True, (255, 255, 255))
-    rect_volver = texto_volver.get_rect(center=(700, 550))
+    rect_volver = texto_volver.get_rect(center=(955, 730))
     fondo_volver = pg.Rect(
         rect_volver.left - 10, rect_volver.top - 10,
         rect_volver.width + 20, rect_volver.height + 20
