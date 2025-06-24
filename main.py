@@ -172,12 +172,15 @@ def main() -> None:
 
                     click_procesado = True
             case "PUNTAJES":
-                interfaz_puntajes(pantalla)
+                ruta = "estaticos/archivos/puntajes.json"
+                interfaz_puntajes(pantalla, ruta)
             case "SALIR":
                 pg.quit()
                 quit()
             case "NIVEL":
-                rect_facil, rect_medio, rect_dificil = interfaz_nivel(pantalla)
+                rect_facil, rect_medio, rect_dificil = interfaz_nivel(
+                    pantalla, fondo, DIMENSIONES
+                )
 
         clock.tick(60)
         pg.display.flip()

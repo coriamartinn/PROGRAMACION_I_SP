@@ -96,37 +96,38 @@ def crear_tablero_con_naves(nivel="FACIL"):
 
 
 def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
-        margen_izquierdo = 40
-        margen_arriba = 40
-        ancho_pantalla, alto_pantalla = dimension_pantalla
-        espacio_disponible_x = ancho_pantalla - 2 * margen_izquierdo
-        espacio_disponible_y = alto_pantalla - 2 * margen_arriba
-        tamano_celda = min(
-            espacio_disponible_x // len(tablero[0]), espacio_disponible_y // len(tablero)
-        )
-        puntaje = 0
+    margen_izquierdo = 40
+    margen_arriba = 40
+    ancho_pantalla, alto_pantalla = dimension_pantalla
+    espacio_disponible_x = ancho_pantalla - 2 * margen_izquierdo
+    espacio_disponible_y = alto_pantalla - 2 * margen_arriba
+    tamano_celda = min(
+        espacio_disponible_x // len(tablero[0]), espacio_disponible_y // len(tablero)
+    )
+    puntaje = 0
 
-        x, y = posicion
-        columna = (x - margen_izquierdo) // tamano_celda
-        fila = (y - margen_arriba) // tamano_celda
+    x, y = posicion
+    columna = (x - margen_izquierdo) // tamano_celda
+    fila = (y - margen_arriba) // tamano_celda
 
-        if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
-            if tablero_disparos[fila][columna] == 0:
-                if tablero[fila][columna] == 1:
-                    tablero_disparos[fila][columna] = 1
-                    puntaje = 1
-                elif tablero[fila][columna] == 0:
-                    tablero_disparos[fila][columna] = -1
-                    puntaje = -1
-                else:
-                    puntaje = 0
-        
-        return puntaje
+    if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
+        if tablero_disparos[fila][columna] == 0:
+            if tablero[fila][columna] == 1:
+                tablero_disparos[fila][columna] = 1
+                puntaje = 1
+            elif tablero[fila][columna] == 0:
+                tablero_disparos[fila][columna] = -1
+                puntaje = -1
+            else:
+                puntaje = 0
+
+    return puntaje
 
 
-def disparo_acertado(tablero: list, tablero_disparos: list, posicion, dimension_pantalla) -> bool:
-    """
-    """
+def disparo_acertado(
+    tablero: list, tablero_disparos: list, posicion, dimension_pantalla
+) -> bool:
+    """ """
     acertado = False
     margen_izquierdo = 40
     margen_arriba = 40
@@ -140,16 +141,16 @@ def disparo_acertado(tablero: list, tablero_disparos: list, posicion, dimension_
     x, y = posicion
     columna = (x - margen_izquierdo) // tamano_celda
     fila = (y - margen_arriba) // tamano_celda
-    
 
     if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
         if tablero_disparos[fila][columna] == 0:
             if tablero[fila][columna] == 1:
                 acertado = True
-    
+
     return acertado
 
-def imprimir_tablero(pantalla, tablero,tablero_disparos=None):
+
+def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
     if tablero_disparos is None:
         tablero_disparos = crear_tablero_vacio(len(tablero))
     pg.font.init()
@@ -196,15 +197,12 @@ def imprimir_tablero(pantalla, tablero,tablero_disparos=None):
             calcular_x = margen_izquierdo + columna * tamano_celda
             calcular_y = margen_arriba + fila * tamano_celda
 
-
             color_celda = (200, 200, 255)
             if tablero_disparos[fila][columna] == 1:
-                    color_celda = (255, 0, 0) # impacto (rojo)
+                color_celda = (255, 0, 0)  # impacto (rojo)
             elif tablero_disparos[fila][columna] == -1:
-                    color_celda = (0, 0, 255) # agua (azul)
+                color_celda = (0, 0, 255)  # agua (azul)
 
-            
-            
             pg.draw.rect(
                 pantalla,
                 color_celda,
