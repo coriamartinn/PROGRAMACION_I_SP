@@ -146,9 +146,11 @@ def main() -> None:
                     posicion = pg.mouse.get_pos()
 
                     if rect_volver and rect_volver.collidepoint(posicion):
-                        pass
+                        estado = "MENU"
                     elif rect_reiniciar and rect_reiniciar.collidepoint(posicion):
-                        pass
+                        tablero_actual = crear_tablero_con_naves(nivel_actual)
+                        tablero_disparos = crear_tablero_vacio(len(tablero_actual))
+                        puntaje_jugador_vivo = 0
                     else:
                         puntaje = manejar_disparo(
                             tablero_actual,
@@ -173,14 +175,30 @@ def main() -> None:
                     click_procesado = True
             case "PUNTAJES":
                 ruta = "estaticos/archivos/puntajes.json"
-                interfaz_puntajes(pantalla, ruta)
+                rect_volver = interfaz_puntajes(pantalla, ruta)
+                if (
+                    evento.type == pg.MOUSEBUTTONDOWN
+                    and evento.button == 1
+                    and not click_procesado
+                ):
+                    posicion = pg.mouse.get_pos()
+                    if rect_volver and rect_volver.collidepoint(posicion):
+                        estado = "MENU"
             case "SALIR":
                 pg.quit()
                 quit()
             case "NIVEL":
-                rect_facil, rect_medio, rect_dificil = interfaz_nivel(
+                rect_facil, rect_medio, rect_dificil, rect_volver = interfaz_nivel(
                     pantalla, fondo, DIMENSIONES
                 )
+                if (
+                    evento.type == pg.MOUSEBUTTONDOWN
+                    and evento.button == 1
+                    and not click_procesado
+                ):
+                    posicion = pg.mouse.get_pos()
+                    if rect_volver and rect_volver.collidepoint(posicion):
+                        estado = "MENU"
 
         clock.tick(60)
         pg.display.flip()

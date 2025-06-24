@@ -136,13 +136,13 @@ def interfaz_jugar(
     pantalla.blit(texto_nombre, (737, 12))
 
     # Mostrar Puntajes en vivo
-    fuente_puntaje = pg.font.SysFont("OCR A Extended", 50)
+    fuente_puntaje = pg.font.SysFont("OCR A Extended", 35)
     texto_puntaje = fuente_puntaje.render(
         f"PUNTAJE: {puntaje_jugador}{puntaje_jugador}{puntaje_jugador}{puntaje_jugador_vivo}",
         True,
         (255, 255, 255),
     )
-    pantalla.blit(texto_puntaje, (754, 60))
+    pantalla.blit(texto_puntaje, (754, 55))
 
     # Botón Reiniciar
     texto_reiniciar = fuente.render("Reiniciar", True, (255, 255, 255))
@@ -226,6 +226,8 @@ def interfaz_puntajes(pantalla: pg.display, ruta) -> None:
     # Dibujamos en pantalla
     pantalla.blit(superficie_puntajes, rect_puntaje)
     pantalla.blit(texto_volver, rect_volver)
+    
+    return rect_volver
 
 
 def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
@@ -239,14 +241,17 @@ def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
     facil = fuente.render("Fácil", True, (255, 255, 255))
     medio = fuente.render("Medio", True, (255, 255, 255))
     dificil = fuente.render("Difícil", True, (255, 255, 255))
+    texto_volver = fuente_alternativa.render("Volver", True, (255, 255, 255))
 
     rect_facil = facil.get_rect()
     rect_medio = medio.get_rect()
     rect_dificil = dificil.get_rect()
-
+    rect_volver = texto_volver.get_rect()
+    
     rect_facil.center = (512, 250)
     rect_medio.center = (512, 350)
     rect_dificil.center = (512, 450)
+    rect_volver.center = (970, 738)
 
     color_fondo = (4, 6, 88)
     fondo_facil = pg.Rect(
@@ -267,17 +272,27 @@ def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
         rect_dificil.width + 2 * padding_x,
         rect_dificil.height + 2 * padding_y,
     )
+    fondo_volver = pg.Rect(
+        rect_volver.left - 10,
+        rect_volver.top - 10,
+        rect_volver.width + 20,
+        rect_volver.height + 20,
+    )
+    
+    
     pantalla.blit(fondo, (0, 0))  # Fondo lindo
 
     pg.draw.rect(pantalla, color_fondo, fondo_facil, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_medio, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_dificil, border_radius=15)
-
+    pg.draw.rect(pantalla, (88, 6, 6), fondo_volver, border_radius=12)
+    
+    pantalla.blit(texto_volver, rect_volver)
     pantalla.blit(facil, rect_facil)
     pantalla.blit(medio, rect_medio)
     pantalla.blit(dificil, rect_dificil)
 
-    return rect_facil, rect_medio, rect_dificil
+    return rect_facil, rect_medio, rect_dificil, rect_volver
 
 
 def mostrar_selector_nivel(pantalla: pg.Surface) -> tuple:
