@@ -59,7 +59,6 @@ def es_posicion_valida(tablero, fila, col, tamaño, orientacion):
 def colocar_nave(tablero, tamaño):
     max_intentos = 100
     exito = False  # Variable para controlar si se colocó o no
-
     for _ in range(max_intentos):
         fila = random.randint(0, len(tablero) - 1)
         col = random.randint(0, len(tablero[0]) - 1)
@@ -201,7 +200,7 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
             if tablero_disparos[fila][columna] == 1:
                 color_celda = (255, 0, 0)  # impacto (rojo)
             elif tablero_disparos[fila][columna] == -1:
-                color_celda = (0, 0, 255)  # agua (azul)
+                color_celda = (0, 148, 218)  # agua (celeste)
 
             pg.draw.rect(
                 pantalla,

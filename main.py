@@ -19,7 +19,7 @@ def main() -> None:
 
     # Ordenamos musica
     sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
-    sonido.set_volume(0)  # PONER VOLUMEN 0.4
+    sonido.set_volume(0.2)  # PONER VOLUMEN 0.4
     sonido.play(-1)
 
     # CONFIGURACION DE PANTALLA
@@ -43,6 +43,8 @@ def main() -> None:
     puntaje_jugador = 0  # inicia en 0 -> (puede bajar a negativo)
     puntaje_jugador_vivo = 0
     click_procesado = False
+    ruta = "estaticos/archivos/puntajes.json"
+    datos_jugadores = {}
 
     # CREACION DE IMAGEN -> (FONDO)
     fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
@@ -158,23 +160,22 @@ def main() -> None:
                             posicion,
                             pantalla.get_size(),
                         )
-                        print(puntaje)
                         if puntaje == 1:
                             puntaje_jugador_vivo += 5
                         elif puntaje == -1:
                             puntaje_jugador_vivo -= 1
                         else:
                             puntaje_jugador_vivo += 0
-
+                        
                     if verificar_victoria(tablero_actual, tablero_disparos):
-                        print("¡Ganaste!")
+                        datos_jugadores[f"{nombre_jugador}"] = puntaje_jugador_vivo
+                        guardar_json(ruta, datos_jugadores)
                         estado = "MENU"
                         tablero_actual = None
                         tablero_disparos = None
 
                     click_procesado = True
             case "PUNTAJES":
-                ruta = "estaticos/archivos/puntajes.json"
                 rect_volver = interfaz_puntajes(pantalla, ruta)
                 if (
                     evento.type == pg.MOUSEBUTTONDOWN
