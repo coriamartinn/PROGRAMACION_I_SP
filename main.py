@@ -43,6 +43,7 @@ def main() -> None:
     puntaje_jugador_vivo = 0
     ruta = "estaticos/archivos/puntajes.json"
     datos_jugadores = {}
+    click_procesado = False
 
     # CREACION DE IMAGEN -> (FONDO)
     fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
@@ -69,6 +70,7 @@ def main() -> None:
                             nombre_jugador += evento.unicode.upper()
 
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
+                click_procesado = False
                 posicion_click = evento.pos
                 if estado == "MENU":
                     if rect_jugar and rect_jugar.collidepoint(posicion_click):
@@ -154,6 +156,7 @@ def main() -> None:
                         estado = "MENU"
                         tablero_actual = None
                         tablero_disparos = None
+                    click_procesado = True
             case "PUNTAJES":
                 rect_volver = interfaz_puntajes(pantalla, ruta)
                 if (
