@@ -34,7 +34,7 @@ NIVELES = {
 }
 
 
-def crear_tablero_vacio(tamano):
+def crear_tablero_vacio(tamano: int) -> list:
     tablero = []
     for _ in range(tamano):
         fila = []
@@ -45,7 +45,7 @@ def crear_tablero_vacio(tamano):
     return tablero
 
 
-def es_posicion_valida(tablero, fila, col, tamaño, orientacion):
+def es_posicion_valida(tablero: list, fila: int, col: int, tamaño: int, orientacion: str) -> bool:
     es_valida = False
 
     if orientacion == "horizontal":
@@ -85,7 +85,7 @@ def es_posicion_valida(tablero, fila, col, tamaño, orientacion):
     return es_valida
 
 
-def colocar_nave(tablero, tamaño, id_nave):
+def colocar_nave(tablero: list, tamaño: int, id_nave: int) -> bool:
     max_intentos = 100
     exito = False  # Variable para controlar si se colocó o no
     for _ in range(max_intentos):
@@ -104,7 +104,7 @@ def colocar_nave(tablero, tamaño, id_nave):
     return exito
 
 
-def crear_tablero_con_naves(nivel="FACIL"):
+def crear_tablero_con_naves(nivel="FACIL") -> list:
     if nivel == "FACIL":
         dificultad = NIVELES["FACIL"]
     elif nivel == "MEDIO":
@@ -125,7 +125,7 @@ def crear_tablero_con_naves(nivel="FACIL"):
     return tablero
 
 
-def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
+def manejar_disparo(tablero: list, tablero_disparos: list, posicion: int, dimension_pantalla: tuple) -> int:
     margen_izquierdo = 40
     margen_arriba = 40
     ancho_pantalla, alto_pantalla = dimension_pantalla
@@ -141,7 +141,9 @@ def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
     fila = (y - margen_arriba) // tamano_celda
 
     if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
-        if tablero_disparos[fila][columna] == 0:  # Si la celda no ha sido disparada #Se agrego 25/06
+        if (
+            tablero_disparos[fila][columna] == 0
+        ):  # Si la celda no ha sido disparada #Se agrego 25/06
             valor_celda = tablero[fila][columna]
 
             if valor_celda == 0:  # Es agua
@@ -152,42 +154,48 @@ def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
                 puntaje = 5  # Sumar 5 puntos por averiar la nave #Se agrego 25/06
 
                 # Verificar si la nave fue hundida #Se agrego 25/06
-                id_nave_golpeada = valor_celda #Se agrego 25/06
-                partes_totales_nave = sum( #Se agrego 25/06
-                    fila_tablero.count(id_nave_golpeada) for fila_tablero in tablero #Se agrego 25/06
-                ) #Se agrego 25/06
-                partes_danadas_nave = sum( #Se agrego 25/06
-                    1 #Se agrego 25/06
-                    for r in range(len(tablero)) #Se agrego 25/06
-                    for c in range(len(tablero[0])) #Se agrego 25/06
-                    if tablero[r][c] == id_nave_golpeada and tablero_disparos[r][c] == 1 #Se agrego 25/06
-                ) #Se agrego 25/06
+                id_nave_golpeada = valor_celda  # Se agrego 25/06
+                partes_totales_nave = sum(  # Se agrego 25/06
+                    fila_tablero.count(id_nave_golpeada)
+                    for fila_tablero in tablero  # Se agrego 25/06
+                )  # Se agrego 25/06
+                partes_danadas_nave = sum(  # Se agrego 25/06
+                    1  # Se agrego 25/06
+                    for r in range(len(tablero))  # Se agrego 25/06
+                    for c in range(len(tablero[0]))  # Se agrego 25/06
+                    if tablero[r][c] == id_nave_golpeada
+                    and tablero_disparos[r][c] == 1  # Se agrego 25/06
+                )  # Se agrego 25/06
 
-                if partes_danadas_nave == partes_totales_nave: #Se agrego 25/06
+                if partes_danadas_nave == partes_totales_nave:  # Se agrego 25/06
                     # Nave hundida, sumar 10 puntos por cada elemento de la nave #Se agrego 25/06
-                    puntaje += 10 * partes_totales_nave #Se agrego 25/06
+                    puntaje += 10 * partes_totales_nave  # Se agrego 25/06
                     celdas_barco = [
                         (r, c)
                         for r in range(len(tablero))
                         for c in range(len(tablero[0]))
                         if tablero[r][c] == id_nave_golpeada
                     ]
-                    
-                    celdas_agua = obtener_vecinos_agua(tablero, tablero_disparos, celdas_barco)
+
+                    celdas_agua = obtener_vecinos_agua(
+                        tablero, tablero_disparos, celdas_barco
+                    )
                     for fila, columna in celdas_agua:
                         tablero_disparos[fila][columna] = -1
     return puntaje
 
-def obtener_vecinos_agua(tablero, tablero_disparos, celdas_barco) -> tuple:
+
+def obtener_vecinos_agua(tablero: list, tablero_disparos: list, celdas_barco: tuple) -> tuple:
     """
     asdasd
     """
-    vecinos_agua = set() # guardar coordenadas celdas agua
-    barco = set(celdas_barco) # para hacer mas facil la busqueda de las celdas donde existe un barco
+    vecinos_agua = set()  # guardar coordenadas celdas agua
+    barco = set(
+        celdas_barco
+    )  # para hacer mas facil la busqueda de las celdas donde existe un barco
     filas = len(tablero)
     columnas = len(tablero[0])
-    
-    
+
     for fila, columna in celdas_barco:
         for df in [-1, 0, 1]:
             for dc in [-1, 0, 1]:
@@ -195,14 +203,21 @@ def obtener_vecinos_agua(tablero, tablero_disparos, celdas_barco) -> tuple:
                     continue
                 f = fila + df
                 c = columna + dc
-            
-                if 0 <= f < filas and 0 <= c < columnas and (f, c) not in barco and tablero[f][c] == 0 and tablero_disparos[f][c] == 0:
+
+                if (
+                    0 <= f < filas
+                    and 0 <= c < columnas
+                    and (f, c) not in barco
+                    and tablero[f][c] == 0
+                    and tablero_disparos[f][c] == 0
+                ):
                     vecinos_agua.add((f, c))
 
     return list(vecinos_agua)
 
+
 def disparo_acertado(
-    tablero: list, tablero_disparos: list, posicion, dimension_pantalla
+    tablero: list, tablero_disparos: list, posicion: tuple, dimension_pantalla: tuple
 ) -> bool:
     """ """
     acertado = False
@@ -227,7 +242,7 @@ def disparo_acertado(
     return acertado
 
 
-def imprimir_tablero(pantalla, tablero, tablero_disparos=None, info_naves=None):
+def imprimir_tablero(pantalla: pg.display, tablero: list, tablero_disparos=None, info_naves=None) -> None:
     if tablero_disparos is None:
         tablero_disparos = crear_tablero_vacio(len(tablero))
     pg.font.init()
@@ -277,12 +292,16 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None, info_naves=None):
 
             color_celda = (200, 200, 255)
             contenido_celda = None
-            
+
             if tablero_disparos[fila][columna] == 1:
                 color_celda = (255, 0, 0)  # impacto (rojo)
                 id_nave_golpeada = tablero[fila][columna]
-                
-                if id_nave_golpeada > 0 and info_naves is not None and id_nave_golpeada in info_naves:
+
+                if (
+                    id_nave_golpeada > 0
+                    and info_naves is not None
+                    and id_nave_golpeada in info_naves
+                ):
                     tipo_nave = info_naves[id_nave_golpeada]["tipo"]
                     contenido_celda = tipo_nave[0].upper()
 
@@ -302,6 +321,13 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None, info_naves=None):
             )
 
             if contenido_celda:
-                texto_letra_nave = fuente_celda.render(contenido_celda, True, (255, 255, 255))
-                rect_texto_letra_nave = texto_letra_nave.get_rect(center=(calcular_x + tamano_celda // 2, calcular_y + tamano_celda // 2))
+                texto_letra_nave = fuente_celda.render(
+                    contenido_celda, True, (255, 255, 255)
+                )
+                rect_texto_letra_nave = texto_letra_nave.get_rect(
+                    center=(
+                        calcular_x + tamano_celda // 2,
+                        calcular_y + tamano_celda // 2,
+                    )
+                )
                 pantalla.blit(texto_letra_nave, rect_texto_letra_nave)

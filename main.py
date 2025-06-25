@@ -5,7 +5,7 @@ from paquetes.interfaces import *
 from paquetes.tablero import *
 
 # from paquetes.usuario import *
-from paquetes.validates import verificar_estado
+#from paquetes.validates import verificar_estado
 
 
 def main() -> None:
@@ -35,14 +35,12 @@ def main() -> None:
     estado = "MENU"
     nivel_actual = "FACIL"  # Nivel por defecto
     musica_activada = True
-    clock = pg.time.Clock()
     tablero_actual = None
     tablero_disparos = None
     rect_reiniciar = None
     nombre_jugador = ""  # inicia vacio
     puntaje_jugador = 0  # inicia en 0 -> (puede bajar a negativo)
     puntaje_jugador_vivo = 0
-    click_procesado = False
     ruta = "estaticos/archivos/puntajes.json"
     datos_jugadores = {}
 
@@ -66,16 +64,12 @@ def main() -> None:
                         # Termina ingreso si tiene 3 letras
                         if len(nombre_jugador) == 3:
                             estado = "JUGAR"
-                            tablero_actual = None
-                            tablero_disparos = None
                     else:
                         if len(nombre_jugador) < 3 and evento.unicode.isalpha():
                             nombre_jugador += evento.unicode.upper()
 
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
-                click_procesado = False
                 posicion_click = evento.pos
-                #print(posicion_click)
                 if estado == "MENU":
                     if rect_jugar and rect_jugar.collidepoint(posicion_click):
                         estado = "NOMBRE"
@@ -93,7 +87,6 @@ def main() -> None:
                         else:
                             mixer.unpause()
                             musica_activada = True
-
                 elif estado == "NIVEL":
                     if rect_facil.collidepoint(posicion_click):
                         nivel_actual = "FACIL"
@@ -124,7 +117,6 @@ def main() -> None:
                 rect_texto = texto.get_rect()
                 rect_texto.center = (512, 384)
                 pantalla.blit(texto, rect_texto)
-
             case "JUGAR":
                 if tablero_actual is None:
                     tablero_actual = crear_tablero_con_naves(nivel_actual)
@@ -138,13 +130,8 @@ def main() -> None:
                     nombre_jugador,
                     nivel_actual,
                 )
-
                 # manejar disparos y verificar victoria
-                if (
-                    evento.type == pg.MOUSEBUTTONDOWN
-                    and evento.button == 1
-                    and not click_procesado
-                ):
+                if evento.type == pg.MOUSEBUTTONDOWN and evento.button == 1:
                     posicion = pg.mouse.get_pos()
 
                     if rect_volver and rect_volver.collidepoint(posicion):
@@ -161,15 +148,12 @@ def main() -> None:
                             pantalla.get_size(),
                         )
                         puntaje_jugador_vivo += puntaje
-                        
                     if verificar_victoria(tablero_actual, tablero_disparos):
                         datos_jugadores[f"{nombre_jugador}"] = puntaje_jugador_vivo
                         guardar_json(ruta, datos_jugadores)
                         estado = "MENU"
                         tablero_actual = None
                         tablero_disparos = None
-
-                    click_procesado = True
             case "PUNTAJES":
                 rect_volver = interfaz_puntajes(pantalla, ruta)
                 if (
@@ -196,7 +180,6 @@ def main() -> None:
                     if rect_volver and rect_volver.collidepoint(posicion):
                         estado = "MENU"
 
-        clock.tick(60)
         pg.display.flip()
 
 

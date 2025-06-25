@@ -1,11 +1,21 @@
-import pygame as pg
 from operator import itemgetter
+
+import pygame as pg
 
 from paquetes.archivos import *
 from paquetes.tablero import *
 from paquetes.validates import *
 
+
 def menu(pantalla: pg.display, nivel_actual="FACIL"):
+    """
+    Esta funcion se encarga de dibujar en pantalla la interfaz del menu
+    Args:
+        pantalla (pg.display): Recibe el display de pantalla,
+        nivel_actual (str): recibe un parametro por defecto en FACIL
+    Returns:
+        tuple: Retorna una tupla con los rect de los botones
+    """
     jugar = "Jugar"
     nivel = "Nivel"
     puntaje = "Puntajes"
@@ -108,15 +118,20 @@ def interfaz_jugar(
     tablero_disparos: list,
     puntaje_jugador: int,
     puntaje_jugador_vivo: int,
-    nombre_jugador,
+    nombre_jugador: str,
     nivel="FACIL",
-) -> None:
+) -> tuple:
     """
-    Esta funcion se encarga de dibujar en pantalla la interfaz del interfaz principal
+    Esta funcion se encarga de dibujar en pantalla la interfaz para jugar
     Args:
-        pantalla (pg.display): Recibe el display de pantalla
+        pantalla (pg.display): Recibe el display de pantalla,
+        tablero (list): Recibe el display de pantalla,
+        tablero_disparos (list): Recibe el display de pantalla,
+        puntaje_jugador (int): Recibe el display de pantalla,
+        puntaje_jugador_vivo (int): Recibe el display de pantalla,
+        nombre_jugador (str): Recibe el display de pantalla,
     Returns:
-        None: No existe retorno
+        tuple: Retorna una tupla con los fondos volver y reiniciar
     """
     if nivel != "FACIL" and nivel != "MEDIO" and nivel != "DIFICIL":
         nivel = "FACIL"
@@ -171,13 +186,14 @@ def interfaz_jugar(
     return fondo_volver, fondo_reiniciar
 
 
-def interfaz_puntajes(pantalla: pg.display, ruta) -> None:
+def interfaz_puntajes(pantalla: pg.display, ruta: str) -> tuple:
     """
-    Esta funcion se encarga de dibujar en pantalla la interfaz del interfaz principal
+    Esta funcion se encarga de dibujar en pantalla la interfaz del top 3 de mejores puntajes
     Args:
         pantalla (pg.display): Recibe el display de pantalla
+        ruta (str): recibe la ruta del archivo.json
     Returns:
-        None: No existe retorno
+        tuple: Retorna el rect de el boton volver
     """
     jugadores = leer_json(ruta)
     puntajes = list(jugadores.items())
@@ -239,13 +255,21 @@ def interfaz_puntajes(pantalla: pg.display, ruta) -> None:
     # Dibujamos en pantalla
     pantalla.blit(superficie_puntajes, rect_puntaje)
     pantalla.blit(texto_volver, rect_volver)
-    
+
     return rect_volver
 
 
-def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
-    # Dibuja tres botones: Fácil, Medio, Difícil
-    # Devuelve los rects de esos botones para detectar clicks
+def interfaz_nivel(pantalla: pg.display, fondo: pg.image, dimensiones: tuple) -> tuple:
+    """
+    Esta funcion se encarga de dibujar en pantalla la interfaz para la eleccion de los niveles:
+    FACIL | MEDIO | DIFICIL
+    Args:
+        pantalla (pg.display): Recibe el display de pantalla
+        fondo (pg.image): Recibe el fondo utilizado en las otras interfaces
+        dimensiones (tuple): recibe las dimensiones de la pantalla
+    Returns:
+        tuple: Retorna una tupla con los rects de cada superficie
+    """
     padding_x = 20
     padding_y = 15
 
@@ -260,7 +284,7 @@ def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
     rect_medio = medio.get_rect()
     rect_dificil = dificil.get_rect()
     rect_volver = texto_volver.get_rect()
-    
+
     rect_facil.center = (512, 250)
     rect_medio.center = (512, 350)
     rect_dificil.center = (512, 450)
@@ -291,15 +315,14 @@ def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
         rect_volver.width + 20,
         rect_volver.height + 20,
     )
-    
-    
+
     pantalla.blit(fondo, (0, 0))  # Fondo lindo
 
     pg.draw.rect(pantalla, color_fondo, fondo_facil, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_medio, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_dificil, border_radius=15)
     pg.draw.rect(pantalla, (88, 6, 6), fondo_volver, border_radius=12)
-    
+
     pantalla.blit(texto_volver, rect_volver)
     pantalla.blit(facil, rect_facil)
     pantalla.blit(medio, rect_medio)
@@ -308,9 +331,14 @@ def interfaz_nivel(pantalla: pg.display, fondo, dimensiones: tuple) -> None:
     return rect_facil, rect_medio, rect_dificil, rect_volver
 
 
-def mostrar_selector_nivel(pantalla: pg.Surface) -> tuple:
+def mostrar_selector_nivel(pantalla: pg.display) -> tuple:
     """
-    Dibuja la pantalla de selección de nivel y retorna los rects para detectar clics.
+    Esta funcion se encarga de dibujar en pantalla la interfaz del top 3 de mejores puntajes
+    Args:
+        pantalla (pg.display): Recibe el display de pantalla
+        ruta (str): recibe la ruta del archivo.json
+    Returns:
+        tuple: retorna los rects de los botones -> FACIL, MEDIO, DIFICIL
     """
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 40)
