@@ -227,7 +227,7 @@ def interfaz_puntajes(pantalla: pg.display, ruta) -> None:
             rect_jugador.width + 20,
             rect_jugador.height + 20,
         )
-        if y < 750:
+        if y < 550:
             pg.draw.rect(pantalla, color_fondo, fondo_jugador, border_radius=15)
             pantalla.blit(superficie_jugador, rect_jugador)
             y += 100
