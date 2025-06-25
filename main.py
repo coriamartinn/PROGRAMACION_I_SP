@@ -19,7 +19,7 @@ def main() -> None:
 
     # Ordenamos musica
     sonido = mixer.Sound("estaticos/sonidos/menu.mp3")
-    sonido.set_volume(0.2)  # PONER VOLUMEN 0.4
+    sonido.set_volume(0)  # PONER VOLUMEN 0.4
     sonido.play(-1)
 
     # CONFIGURACION DE PANTALLA
@@ -75,7 +75,7 @@ def main() -> None:
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
                 click_procesado = False
                 posicion_click = evento.pos
-                print(posicion_click)
+                #print(posicion_click)
                 if estado == "MENU":
                     if rect_jugar and rect_jugar.collidepoint(posicion_click):
                         estado = "NOMBRE"

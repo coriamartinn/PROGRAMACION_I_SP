@@ -16,9 +16,11 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
 
     pg.font.init()
     fuente = pg.font.SysFont("OCR A Extended", 45)
+    fuente_titulo = pg.font.SysFont("OCR A Extended", 90)
     fuente_alternativa = pg.font.SysFont("OCR A Extended", 25)
 
     # Superficies de texto
+    superficie_titulo = fuente_titulo.render("Batalla Naval", True, (255, 255, 255))
     superficie_jugar = fuente.render(jugar, True, (255, 255, 255))
     superficie_nivel = fuente.render(nivel, True, (255, 255, 255))
     superficie_puntaje = fuente.render(puntaje, True, (255, 255, 255))
@@ -26,6 +28,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     superficie_musica = fuente_alternativa.render(musica, True, (255, 255, 255))
 
     # Obtener rects
+    rect_titulo = superficie_titulo.get_rect()
     rect_jugar = superficie_jugar.get_rect()
     rect_nivel = superficie_nivel.get_rect()
     rect_puntajes = superficie_puntaje.get_rect()
@@ -33,6 +36,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     rect_musica = superficie_musica.get_rect()
 
     # Centrar posiciones
+    rect_titulo.center = (512, 120)
     rect_jugar.center = (512, 284)
     rect_nivel.center = (512, 384)
     rect_puntajes.center = (512, 484)
@@ -40,6 +44,12 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     rect_musica.center = (959, 726)
 
     # Fondos con padding
+    fondo_titulo = pg.Rect(
+        rect_titulo.left - padding_x,
+        rect_titulo.top - padding_y,
+        rect_titulo.width + 2 * padding_x,
+        rect_titulo.height + 2 * padding_y,
+    )
     fondo_jugar = pg.Rect(
         rect_jugar.left - padding_x,
         rect_jugar.top - padding_y,
@@ -73,6 +83,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
 
     # Dibujar fondos
     color_fondo = (4, 6, 88)
+    pg.draw.rect(pantalla, color_fondo, fondo_titulo, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_jugar, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_nivel, border_radius=15)
     pg.draw.rect(pantalla, color_fondo, fondo_puntajes, border_radius=15)
@@ -80,6 +91,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     pg.draw.rect(pantalla, color_fondo, fondo_musica, border_radius=15)
 
     # Dibujar textos
+    pantalla.blit(superficie_titulo, rect_titulo)
     pantalla.blit(superficie_jugar, rect_jugar)
     pantalla.blit(superficie_nivel, rect_nivel)
     pantalla.blit(superficie_puntaje, rect_puntajes)
@@ -215,9 +227,10 @@ def interfaz_puntajes(pantalla: pg.display, ruta) -> None:
             rect_jugador.width + 20,
             rect_jugador.height + 20,
         )
-        pg.draw.rect(pantalla, color_fondo, fondo_jugador, border_radius=15)
-        pantalla.blit(superficie_jugador, rect_jugador)
-        y += 100
+        if y < 750:
+            pg.draw.rect(pantalla, color_fondo, fondo_jugador, border_radius=15)
+            pantalla.blit(superficie_jugador, rect_jugador)
+            y += 100
 
     # Centro la posicion de la superficie -> (texto creado)
 
