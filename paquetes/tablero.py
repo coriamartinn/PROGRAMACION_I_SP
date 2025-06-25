@@ -47,12 +47,41 @@ def crear_tablero_vacio(tamano):
 
 def es_posicion_valida(tablero, fila, col, tamaño, orientacion):
     es_valida = False
+
     if orientacion == "horizontal":
         if col + tamaño <= len(tablero[0]):
-            es_valida = all(tablero[fila][c] == 0 for c in range(col, col + tamaño))
-    else:
+            es_valida = True
+            for c in range(col, col + tamaño):
+                if tablero[fila][c] != 0:
+                    es_valida = False
+                    break
+                for df in [-1, 0, 1]:
+                    for dc in [-1, 0, 1]:
+                        nf = fila + df
+                        nc = c + dc
+                        if 0 <= nf < len(tablero) and 0 <= nc < len(tablero[0]):
+                            if tablero[nf][nc] != 0:
+                                es_valida = False
+                                break
+                        if not es_valida:
+                            break
+    else:  # orientación vertical
         if fila + tamaño <= len(tablero):
-            es_valida = all(tablero[r][col] == 0 for r in range(fila, fila + tamaño))
+            es_valida = True
+            for r in range(fila, fila + tamaño):
+                if tablero[r][col] != 0:
+                    es_valida = False
+                    break
+                for df in [-1, 0, 1]:
+                    for dc in [-1, 0, 1]:
+                        nf = r + df
+                        nc = col + dc
+                        if 0 <= nf < len(tablero) and 0 <= nc < len(tablero[0]):
+                            if tablero[nf][nc] != 0:
+                                es_valida = False
+                                break
+                        if not es_valida:
+                            break
     return es_valida
 
 
@@ -137,8 +166,40 @@ def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
                 if partes_danadas_nave == partes_totales_nave: #Se agrego 25/06
                     # Nave hundida, sumar 10 puntos por cada elemento de la nave #Se agrego 25/06
                     puntaje += 10 * partes_totales_nave #Se agrego 25/06
+                    celdas_barco = [
+                        (r, c)
+                        for r in range(len(tablero))
+                        for c in range(len(tablero[0]))
+                        if tablero[r][c] == id_nave_golpeada
+                    ]
+                    
+                    celdas_agua = obtener_vecinos_agua(tablero, tablero_disparos, celdas_barco)
+                    for fila, columna in celdas_agua:
+                        tablero_disparos[fila][columna] = -1
     return puntaje
 
+def obtener_vecinos_agua(tablero, tablero_disparos, celdas_barco) -> tuple:
+    """
+    asdasd
+    """
+    vecinos_agua = set() # guardar coordenadas celdas agua
+    barco = set(celdas_barco) # para hacer mas facil la busqueda de las celdas donde existe un barco
+    filas = len(tablero)
+    columnas = len(tablero[0])
+    
+    
+    for fila, columna in celdas_barco:
+        for df in [-1, 0, 1]:
+            for dc in [-1, 0, 1]:
+                if df == 0 and dc == 0:
+                    continue
+                f = fila + df
+                c = columna + dc
+            
+                if 0 <= f < filas and 0 <= c < columnas and (f, c) not in barco and tablero[f][c] == 0 and tablero_disparos[f][c] == 0:
+                    vecinos_agua.add((f, c))
+
+    return list(vecinos_agua)
 
 def disparo_acertado(
     tablero: list, tablero_disparos: list, posicion, dimension_pantalla
