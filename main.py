@@ -160,12 +160,7 @@ def main() -> None:
                             posicion,
                             pantalla.get_size(),
                         )
-                        if puntaje == 1:
-                            puntaje_jugador_vivo += 5
-                        elif puntaje == -1:
-                            puntaje_jugador_vivo -= 1
-                        else:
-                            puntaje_jugador_vivo += 0
+                        puntaje_jugador_vivo += puntaje
                         
                     if verificar_victoria(tablero_actual, tablero_disparos):
                         datos_jugadores[f"{nombre_jugador}"] = puntaje_jugador_vivo

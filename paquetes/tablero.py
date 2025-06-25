@@ -56,7 +56,7 @@ def es_posicion_valida(tablero, fila, col, tamaño, orientacion):
     return es_valida
 
 
-def colocar_nave(tablero, tamaño):
+def colocar_nave(tablero, tamaño, id_nave):
     max_intentos = 100
     exito = False  # Variable para controlar si se colocó o no
     for _ in range(max_intentos):
@@ -66,10 +66,10 @@ def colocar_nave(tablero, tamaño):
         if es_posicion_valida(tablero, fila, col, tamaño, orientacion):
             if orientacion == "horizontal":
                 for c in range(col, col + tamaño):
-                    tablero[fila][c] = 1
+                    tablero[fila][c] = id_nave
             else:
                 for r in range(fila, fila + tamaño):
-                    tablero[r][col] = 1
+                    tablero[r][col] = id_nave
             exito = True
             break  # Salimos del for porque ya colocamos la nave
     return exito
@@ -84,11 +84,13 @@ def crear_tablero_con_naves(nivel="FACIL"):
         dificultad = NIVELES["DIFICIL"]
 
     tablero = crear_tablero_vacio(dificultad["tamano"])
+    id_actual_nave = 2
     for tipo, (tamaño, cantidad) in dificultad["tipos_naves"].items():
         colocadas = 0
         for _ in range(cantidad):
-            if colocar_nave(tablero, tamaño):
+            if colocar_nave(tablero, tamaño, id_actual_nave):
                 colocadas += 1
+                id_actual_nave += 1
         if colocadas < cantidad:
             print(f"Advertencia: no se colocaron todas las naves de tipo {tipo}")
     return tablero
@@ -110,16 +112,31 @@ def manejar_disparo(tablero, tablero_disparos, posicion, dimension_pantalla):
     fila = (y - margen_arriba) // tamano_celda
 
     if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
-        if tablero_disparos[fila][columna] == 0:
-            if tablero[fila][columna] == 1:
-                tablero_disparos[fila][columna] = 1
-                puntaje = 1
-            elif tablero[fila][columna] == 0:
-                tablero_disparos[fila][columna] = -1
-                puntaje = -1
-            else:
-                puntaje = 0
+        if tablero_disparos[fila][columna] == 0:  # Si la celda no ha sido disparada #Se agrego 25/06
+            valor_celda = tablero[fila][columna]
 
+            if valor_celda == 0:  # Es agua
+                tablero_disparos[fila][columna] = -1
+                puntaje = -1  # Restar 1 punto por disparo al agua #Se agrego 25/06
+            else:  # Es una nave (valor_celda > 1, ya que 1 era antes el marcador de nave) #Se agrego 25/06
+                tablero_disparos[fila][columna] = 1  # Marcar como golpeado
+                puntaje = 5  # Sumar 5 puntos por averiar la nave #Se agrego 25/06
+
+                # Verificar si la nave fue hundida #Se agrego 25/06
+                id_nave_golpeada = valor_celda #Se agrego 25/06
+                partes_totales_nave = sum( #Se agrego 25/06
+                    fila_tablero.count(id_nave_golpeada) for fila_tablero in tablero #Se agrego 25/06
+                ) #Se agrego 25/06
+                partes_danadas_nave = sum( #Se agrego 25/06
+                    1 #Se agrego 25/06
+                    for r in range(len(tablero)) #Se agrego 25/06
+                    for c in range(len(tablero[0])) #Se agrego 25/06
+                    if tablero[r][c] == id_nave_golpeada and tablero_disparos[r][c] == 1 #Se agrego 25/06
+                ) #Se agrego 25/06
+
+                if partes_danadas_nave == partes_totales_nave: #Se agrego 25/06
+                    # Nave hundida, sumar 10 puntos por cada elemento de la nave #Se agrego 25/06
+                    puntaje += 10 * partes_totales_nave #Se agrego 25/06
     return puntaje
 
 
@@ -143,13 +160,13 @@ def disparo_acertado(
 
     if 0 <= fila < len(tablero) and 0 <= columna < len(tablero[0]):
         if tablero_disparos[fila][columna] == 0:
-            if tablero[fila][columna] == 1:
+            if tablero[fila][columna] != 0:
                 acertado = True
 
     return acertado
 
 
-def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
+def imprimir_tablero(pantalla, tablero, tablero_disparos=None, info_naves=None):
     if tablero_disparos is None:
         tablero_disparos = crear_tablero_vacio(len(tablero))
     pg.font.init()
@@ -163,11 +180,12 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
         (alto_pantalla - 2 * margen_arriba) // len(tablero),
     )
 
-    fuente = pg.font.SysFont("Arial", tamano_celda // 2)
+    fuente_celda = pg.font.SysFont("Arial", int(tamano_celda * 0.7))
+    fuente_coord = pg.font.SysFont("Arial", tamano_celda // 2)
     # Dibujar números columnas arriba
     for col in range(len(tablero[0])):
         numero = str(col + 1)
-        texto_numero = fuente.render(numero, True, (255, 255, 255))
+        texto_numero = fuente_coord.render(numero, True, (255, 255, 255))
         x = (
             margen_izquierdo
             + col * tamano_celda
@@ -181,7 +199,7 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
     letras = string.ascii_uppercase
     for fila in range(len(tablero)):
         letra = letras[fila] if fila < len(letras) else "?"
-        texto_letra = fuente.render(letra, True, (255, 255, 255))
+        texto_letra = fuente_coord.render(letra, True, (255, 255, 255))
         x = margen_izquierdo // 2 - texto_letra.get_width() // 2
         y = (
             margen_arriba
@@ -197,8 +215,16 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
             calcular_y = margen_arriba + fila * tamano_celda
 
             color_celda = (200, 200, 255)
+            contenido_celda = None
+            
             if tablero_disparos[fila][columna] == 1:
                 color_celda = (255, 0, 0)  # impacto (rojo)
+                id_nave_golpeada = tablero[fila][columna]
+                
+                if id_nave_golpeada > 0 and info_naves is not None and id_nave_golpeada in info_naves:
+                    tipo_nave = info_naves[id_nave_golpeada]["tipo"]
+                    contenido_celda = tipo_nave[0].upper()
+
             elif tablero_disparos[fila][columna] == -1:
                 color_celda = (0, 148, 218)  # agua (celeste)
 
@@ -213,3 +239,8 @@ def imprimir_tablero(pantalla, tablero, tablero_disparos=None):
                 (calcular_x, calcular_y, tamano_celda, tamano_celda),
                 1,
             )
+
+            if contenido_celda:
+                texto_letra_nave = fuente_celda.render(contenido_celda, True, (255, 255, 255))
+                rect_texto_letra_nave = texto_letra_nave.get_rect(center=(calcular_x + tamano_celda // 2, calcular_y + tamano_celda // 2))
+                pantalla.blit(texto_letra_nave, rect_texto_letra_nave)
