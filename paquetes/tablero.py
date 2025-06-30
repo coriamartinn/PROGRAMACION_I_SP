@@ -35,6 +35,15 @@ NIVELES = {
 
 
 def crear_tablero_vacio(tamano: int) -> list:
+    """
+    Crea un tablero de juego vacío de un tamaño especificado.
+
+    Args:
+        tamano (int): El tamaño del tablero (por ejemplo, 10 para un tablero de 10x10).
+
+    Returns:
+        list: Una lista de listas representando el tablero vacío, donde cada celda contiene un 0.
+    """
     tablero = []
     for _ in range(tamano):
         fila = []
@@ -45,7 +54,24 @@ def crear_tablero_vacio(tamano: int) -> list:
     return tablero
 
 
-def es_posicion_valida(tablero: list, fila: int, col: int, tamaño: int, orientacion: str) -> bool:
+def es_posicion_valida(
+    tablero: list, fila: int, col: int, tamaño: int, orientacion: str
+) -> bool:
+    """
+    Verifica si una posición y orientación dadas son válidas para colocar una nave en el tablero.
+    Una posición es válida si la nave cabe en el tablero y no se superpone con otras naves
+    ni con sus zonas de seguridad (vecinos).
+
+    Args:
+        tablero (list): El tablero de juego actual.
+        fila (int): La fila inicial para colocar la nave.
+        col (int): La columna inicial para colocar la nave.
+        tamaño (int): El tamaño de la nave.
+        orientacion (str): La orientación de la nave ('horizontal' o 'vertical').
+
+    Returns:
+        bool: True si la posición es válida, False en caso contrario.
+    """
     es_valida = False
 
     if orientacion == "horizontal":
@@ -86,6 +112,17 @@ def es_posicion_valida(tablero: list, fila: int, col: int, tamaño: int, orienta
 
 
 def colocar_nave(tablero: list, tamaño: int, id_nave: int) -> bool:
+    """
+    Intenta colocar una nave de un tamaño y ID específicos en una posición aleatoria válida en el tablero.
+
+    Args:
+        tablero (list): El tablero de juego.
+        tamaño (int): El tamaño de la nave a colocar.
+        id_nave (int): El identificador único de la nave.
+
+    Returns:
+       bool: True si la nave se colocó con éxito, False en caso contrario.
+    """
     max_intentos = 100
     exito = False  # Variable para controlar si se colocó o no
     for _ in range(max_intentos):
@@ -105,6 +142,17 @@ def colocar_nave(tablero: list, tamaño: int, id_nave: int) -> bool:
 
 
 def crear_tablero_con_naves(nivel="FACIL") -> list:
+    """
+    Intenta colocar una nave de un tamaño y ID específicos en una posición aleatoria válida en el tablero.
+
+    Args:
+        tablero (list): El tablero de juego.
+        tamaño (int): El tamaño de la nave a colocar.
+        id_nave (int): El identificador único de la nave.
+
+    Returns:
+       bool: True si la nave se colocó con éxito, False en caso contrario.
+    """
     if nivel == "FACIL":
         dificultad = NIVELES["FACIL"]
     elif nivel == "MEDIO":
@@ -125,7 +173,21 @@ def crear_tablero_con_naves(nivel="FACIL") -> list:
     return tablero
 
 
-def manejar_disparo(tablero: list, tablero_disparos: list, posicion: int, dimension_pantalla: tuple) -> int:
+def manejar_disparo(
+    tablero: list, tablero_disparos: list, posicion: int, dimension_pantalla: tuple
+) -> int:
+    """
+    Maneja el disparo en el tablero de juego, actualizando el tablero de disparos y calculando el puntaje.
+
+    Args:
+        tablero (list): El tablero de juego con las naves.
+        tablero_disparos (list): El tablero que registra los disparos.
+        posicion (int): Una tupla (x, y) de las coordenadas del clic en la pantalla.
+        dimension_pantalla (tuple): Una tupla (ancho, alto) de las dimensiones de la pantalla.
+
+    Returns:
+        int: El puntaje obtenido por el disparo
+    """
     margen_izquierdo = 40
     margen_arriba = 40
     ancho_pantalla, alto_pantalla = dimension_pantalla
@@ -185,9 +247,17 @@ def manejar_disparo(tablero: list, tablero_disparos: list, posicion: int, dimens
     return puntaje
 
 
-def obtener_vecinos_agua(tablero: list, tablero_disparos: list, celdas_barco: tuple) -> tuple:
+def obtener_vecinos_agua(
+    tablero: list, tablero_disparos: list, celdas_barco: tuple
+) -> tuple:
     """
-    asdasd
+    Obtiene las coordenadas de las celdas de "agua" adyacentes a una nave hundida que aún no han sido marcadas.
+    Args:
+        tablero (list): El tablero de juego con las naves.
+        tablero_disparos (list): El tablero que registra los disparos.
+        celdas_barco (tuple): Una tupla de tuplas (fila, columna) que representan las celdas ocupadas por la nave hundida.
+    Returns:
+        tuple: Una tupla de tuplas (fila, columna) de las celdas de agua adyacentes.
     """
     vecinos_agua = set()  # guardar coordenadas celdas agua
     barco = set(
@@ -219,7 +289,18 @@ def obtener_vecinos_agua(tablero: list, tablero_disparos: list, celdas_barco: tu
 def disparo_acertado(
     tablero: list, tablero_disparos: list, posicion: tuple, dimension_pantalla: tuple
 ) -> bool:
-    """ """
+    """
+    Verifica si un disparo en una posición dada impactaría una nave que aún no ha sido disparada.
+
+    Args:
+        tablero (list): El tablero de juego con las naves.
+        tablero_disparos (list): El tablero que registra los disparos.
+        posicion (tuple): Una tupla (x, y) de las coordenadas del clic en la pantalla.
+        dimension_pantalla (tuple): Una tupla de las dimensiones de la pantalla.
+
+    Returns:
+        bool: True si el disparo es un acierto en una celda no disparada, False en caso contrario.
+    """
     acertado = False
     margen_izquierdo = 40
     margen_arriba = 40
@@ -242,7 +323,18 @@ def disparo_acertado(
     return acertado
 
 
-def imprimir_tablero(pantalla: pg.display, tablero: list, tablero_disparos=None, info_naves=None) -> None:
+def imprimir_tablero(
+    pantalla: pg.display, tablero: list, tablero_disparos=None, info_naves=None
+) -> None:
+    """
+    Dibuja el tablero de juego en la pantalla de Pygame, incluyendo las naves, los disparos y las coordenadas del tablero.
+
+    Args:
+        pantalla (pg.display): El objeto de display de Pygame donde se dibujará el tablero.
+        tablero (list): El tablero de juego con las naves.
+        tablero_disparos (list, optional): El tablero que registra los disparos.
+        info_naves (dict, optional): Un diccionario con información sobre los tipos de naves,utilizado para mostrar las iniciales de las naves.
+    """
     if tablero_disparos is None:
         tablero_disparos = crear_tablero_vacio(len(tablero))
     pg.font.init()
