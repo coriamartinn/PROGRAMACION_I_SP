@@ -48,7 +48,7 @@ def main() -> None:
     click_procesado = False
 
     # CREACION DE IMAGEN -> (FONDO)
-    fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
+    fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  #MODIFICAR FONDO
     fondo = pg.transform.scale(fondo, DIMENSIONES)
 
     # BUCLE PRINCIPAL DEL JUEGO

@@ -366,7 +366,11 @@ def imprimir_tablero(
     # Letras filas a la izquierda
     letras = string.ascii_uppercase
     for fila in range(len(tablero)):
-        letra = letras[fila] if fila < len(letras) else "?"
+        #letra = None # Inicializamos la variable
+        if fila < len(letras):
+            letra = letras[fila]
+        else:
+            letra = "-"
         texto_letra = fuente_coord.render(letra, True, (255, 255, 255))
         x = margen_izquierdo // 2 - texto_letra.get_width() // 2
         y = (
