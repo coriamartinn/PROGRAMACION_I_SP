@@ -330,37 +330,6 @@ def interfaz_nivel(pantalla: pg.display, fondo: pg.image, dimensiones: tuple) ->
 
     return rect_facil, rect_medio, rect_dificil, rect_volver
 
-def mostrar_selector_nivel(pantalla: pg.display) -> tuple:
-    """
-    Esta funcion se encarga de dibujar en pantalla la interfaz del top 3 de mejores puntajes
-    Args:
-        pantalla (pg.display): Recibe el display de pantalla
-        ruta (str): recibe la ruta del archivo.json
-    Returns:
-        tuple: retorna los rects de los botones -> FACIL, MEDIO, DIFICIL
-    """
-    pg.font.init()
-    fuente = pg.font.SysFont("OCR A Extended", 40)
-
-    opciones = {
-        "FACIL": fuente.render("FACIL", True, (255, 255, 255)),
-        "MEDIO": fuente.render("MEDIO", True, (255, 255, 255)),
-        "DIFICIL": fuente.render("DIFICIL", True, (255, 255, 255)),
-    }
-
-    rects = {}
-    y = 180
-    for nombre, superficie in opciones.items():
-        rect = superficie.get_rect(center=(400, y))
-        fondo = pg.Rect(
-            rect.left - 20, rect.top - 15, rect.width + 40, rect.height + 30
-        )
-        pg.draw.rect(pantalla, (50, 50, 200), fondo, border_radius=10)
-        pantalla.blit(superficie, rect)
-        rects[nombre] = rect
-        y += 100
-
-    return rects["FACIL"], rects["MEDIO"], rects["DIFICIL"]
 
 def interfaz_nombre(pantalla, nombre_jugador) -> None:
     """

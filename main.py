@@ -61,10 +61,13 @@ def main() -> None:
             if estado == "NOMBRE":
                 estado, nombre_jugador = estado_nombre(pantalla, evento, nombre_jugador)
 
+
+            # MANEJO DE CLICK IZQUIERDO PARA SABER QUE BOTON SE SELECCIONA
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
                 click_procesado = False
                 rects = {}
 
+                # ESTADO POR DEFECTO
                 if estado == "MENU":
                     rects = {
                         "jugar": rect_jugar,
@@ -73,6 +76,7 @@ def main() -> None:
                         "salir": rect_salir,
                         "musica": rect_musica,
                     }
+                # ESTADO SI SE APRETA EL BOTON NIVEL
                 elif estado == "NIVEL":
                     rects = {
                         "facil": rect_facil,
@@ -80,6 +84,7 @@ def main() -> None:
                         "dificil": rect_dificil,
                         "volver": rect_volver,
                     }
+                # ESTADO SI SE APRETA EL BOTON PUNTAJES
                 elif estado == "PUNTAJES":
                     rects = {"volver": rect_volver}
 
@@ -96,6 +101,7 @@ def main() -> None:
 
         pantalla.blit(fondo, (0, 0))  # pintamos el fondo de la pantalla
 
+        # MATCH PARA MANEJO DE INTERFACES (ACA DEPENDE EL valor de estado se pinta la interfaz indicada)
         match estado:
             case "MENU":
                 rect_jugar, rect_nivel, rect_puntajes, rect_salir, rect_musica = menu(
