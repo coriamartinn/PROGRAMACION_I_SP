@@ -18,7 +18,7 @@ def jugar(
     nivel_actual,
     datos_jugadores,
     ruta,
-):
+) -> tuple:
     """
     Controla la lógica principal del juego durante el estado 'JUGAR'.
 
@@ -98,7 +98,7 @@ def jugar(
     )
 
 
-def estado_nombre(pantalla, evento, nombre_jugador):
+def estado_nombre(pantalla, evento, nombre_jugador) -> tuple:
     """
     Gestiona la entrada del nombre del jugador en el estado 'NOMBRE'.
 
@@ -128,7 +128,7 @@ def estado_nombre(pantalla, evento, nombre_jugador):
 
 def manejar_evento_estado(
     evento, estado, nombre_jugador, musica_activada, nivel_actual, rects
-):
+) -> tuple:
     """
     Gestiona los eventos de clic según el estado actual del juego.
 
@@ -172,7 +172,7 @@ def manejar_evento_estado(
     return nuevo_estado, nuevo_nombre, nueva_musica, nuevo_nivel
 
 
-def manejar_click_menu(posicion_click, rects, musica_activada):
+def manejar_click_menu(posicion_click, rects, musica_activada) -> tuple:
     """
     Maneja los clics en el menú principal del juego.
 
@@ -210,7 +210,7 @@ def manejar_click_menu(posicion_click, rects, musica_activada):
     return nuevo_estado, musica_activada, reset_nombre
 
 
-def manejar_click_nivel(posicion_click, rects):
+def manejar_click_nivel(posicion_click, rects) -> tuple:
     """
     Maneja los clics en la pantalla de selección de nivel.
 
