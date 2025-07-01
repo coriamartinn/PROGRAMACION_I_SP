@@ -60,7 +60,7 @@ def main() -> None:
 
             if estado == "NOMBRE":
                 estado, nombre_jugador = estado_nombre(pantalla, evento, nombre_jugador)
-                
+
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
                 click_procesado = False
                 rects = {}
@@ -94,7 +94,7 @@ def main() -> None:
                     )
                 )
 
-        pantalla.blit(fondo, (0, 0)) # pintamos el fondo de la pantalla
+        pantalla.blit(fondo, (0, 0))  # pintamos el fondo de la pantalla
 
         match estado:
             case "MENU":
@@ -134,7 +134,7 @@ def main() -> None:
                 pg.quit()
                 quit()
 
-        pg.display.flip() # actualizamos la pantalla
+        pg.display.flip()  # actualizamos la pantalla
 
 
 main()  # llamado a la ejecución
