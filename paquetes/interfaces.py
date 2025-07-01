@@ -330,7 +330,6 @@ def interfaz_nivel(pantalla: pg.display, fondo: pg.image, dimensiones: tuple) ->
 
     return rect_facil, rect_medio, rect_dificil, rect_volver
 
-
 def mostrar_selector_nivel(pantalla: pg.display) -> tuple:
     """
     Esta funcion se encarga de dibujar en pantalla la interfaz del top 3 de mejores puntajes
@@ -363,7 +362,15 @@ def mostrar_selector_nivel(pantalla: pg.display) -> tuple:
 
     return rects["FACIL"], rects["MEDIO"], rects["DIFICIL"]
 
-def interfaz_nombre(pantalla, nombre_jugador):
+def interfaz_nombre(pantalla, nombre_jugador) -> None:
+    """
+    Esta funcion pinta la interfaz donde se tiene que poner el nombre que el usuario desee para jugar
+    Args:
+        pantalla (pg.display): obtenemos la pantalla,
+        nombre_jugador (str): obtenemos el nombre del jugador, por defecto es un string vacio
+    Returns:
+        None: No existe retorno.
+    """
     pantalla.fill((0, 0, 0))
     fuente = pg.font.SysFont("OCR A Extended", 50)
     texto = fuente.render(f"Ingrese nombre (3 letras): {nombre_jugador}", True, (255, 255, 255))
