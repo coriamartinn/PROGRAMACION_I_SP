@@ -20,7 +20,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     nivel = "Nivel"
     puntaje = "Puntajes"
     salir = "Salir"
-    musica = "On/Off"
+    musica = "Prender/Apagar"
     padding_x = 20
     padding_y = 15
 
@@ -51,7 +51,7 @@ def menu(pantalla: pg.display, nivel_actual="FACIL"):
     rect_nivel.center = (512, 384)
     rect_puntajes.center = (512, 484)
     rect_salir.center = (512, 584)
-    rect_musica.center = (959, 726)
+    rect_musica.center = (925, 726)
 
     # Fondos con padding
     fondo_titulo = pg.Rect(
