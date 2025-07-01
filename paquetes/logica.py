@@ -19,6 +19,29 @@ def jugar(
     datos_jugadores,
     ruta,
 ):
+    """
+    Controla la lógica principal del juego durante el estado 'JUGAR'.
+
+    Inicializa los tableros si no existen, gestiona los eventos de clic para jugar, reiniciar
+    o volver al menú, actualiza el puntaje y verifica la condición de victoria.
+
+    Args:
+        pantalla (Surface): La ventana donde se renderiza el juego.
+        evento (Event): El evento actual capturado por Pygame.
+        estado (str): El estado actual del juego.
+        tablero_actual (list): El tablero con las naves colocadas.
+        tablero_disparos (list): El tablero que registra los disparos realizados.
+        puntaje_jugador (int): Puntaje total acumulado del jugador.
+        puntaje_jugador_vivo (int): Puntaje acumulado en la partida actual.
+        nombre_jugador (str): Nombre del jugador.
+        nivel_actual (str): Nivel de dificultad actual.
+        datos_jugadores (dict): Diccionario con datos de jugadores y puntajes.
+        ruta (str): Ruta al archivo JSON donde se guardan los puntajes.
+
+    Returns:
+        tuple: Contiene el nuevo estado, tablero_actual actualizado, tablero_disparos actualizado,
+               puntaje_jugador_vivo actualizado, y click_procesado (bool).
+    """
     if tablero_actual is None:
         tablero_actual = crear_tablero_con_naves(nivel_actual)
         tablero_disparos = crear_tablero_vacio(len(tablero_actual))
@@ -32,6 +55,20 @@ def jugar(
         nombre_jugador,
         nivel_actual,
     )
+    """
+    Gestiona la entrada del nombre del jugador en el estado 'NOMBRE'.
+
+    Permite capturar letras, borrar con Backspace y confirma el nombre al presionar Enter,
+    siempre que el nombre tenga 3 caracteres.
+
+    Args:
+        pantalla (Surface): La ventana donde se renderiza el juego.
+        evento (Event): El evento actual capturado por Pygame.
+        nombre_jugador (str): Nombre actual introducido por el jugador.
+
+    Returns:
+        tuple: Nuevo estado (str) y nombre_jugador actualizado (str).
+    """
 
     click_procesado = False
 
@@ -89,6 +126,24 @@ def estado_nombre(pantalla, evento, nombre_jugador):
 def manejar_evento_estado(
     evento, estado, nombre_jugador, musica_activada, nivel_actual, rects
 ):
+    """
+    Gestiona los eventos de clic según el estado actual del juego.
+
+    Cambia el estado del juego, el nombre del jugador, el nivel de dificultad y el estado de la música
+    dependiendo del área de la pantalla clickeada.
+
+    Args:
+        evento (Event): Evento actual capturado por Pygame.
+        estado (str): Estado actual del juego.
+        nombre_jugador (str): Nombre del jugador.
+        musica_activada (bool): Indicador si la música está activada o no.
+        nivel_actual (str): Nivel de dificultad actual.
+        rects (dict): Diccionario con rectángulos clickeables según el estado.
+
+    Returns:
+        tuple: Nuevo estado (str), nombre_jugador actualizado (str), estado de la música (bool),
+               y nivel_actual actualizado (str).
+    """
     nuevo_estado = estado
     nuevo_nombre = nombre_jugador
     nuevo_nivel = nivel_actual
@@ -116,15 +171,18 @@ def manejar_evento_estado(
 
 def manejar_click_menu(posicion_click, rects, musica_activada):
     """
-    rects: dict con rectángulos:
-        {
-            'jugar': rect_jugar,
-            'nivel': rect_nivel,
-            'puntajes': rect_puntajes,
-            'salir': rect_salir,
-            'musica': rect_musica
-        }
-    Devuelve (nuevo_estado, musica_activada, reset_nombre)
+    Maneja los clics en el menú principal del juego.
+
+    Detecta si se clickeó en opciones como jugar, cambiar nivel, ver puntajes, salir o activar/desactivar música,
+    y devuelve el nuevo estado, el estado de la música y si se debe resetear el nombre.
+
+    Args:
+        posicion_click (tuple): Coordenadas (x, y) del clic del ratón.
+        rects (dict): Diccionario con rectángulos para las opciones del menú.
+        musica_activada (bool): Estado actual de la música.
+
+    Returns:
+        tuple: Nuevo estado (str), estado actualizado de la música (bool), y reset_nombre (bool).
     """
     nuevo_estado = "MENU"
     reset_nombre = False
@@ -151,14 +209,16 @@ def manejar_click_menu(posicion_click, rects, musica_activada):
 
 def manejar_click_nivel(posicion_click, rects):
     """
-    rects: dict con rectángulos:
-        {
-            'facil': rect_facil,
-            'medio': rect_medio,
-            'dificil': rect_dificil,
-            'volver': rect_volver
-        }
-    Devuelve (nuevo_estado, nuevo_nivel)
+    Maneja los clics en la pantalla de selección de nivel.
+
+    Cambia el nivel de dificultad y el estado según el botón clickeado, o vuelve al menú.
+
+    Args:
+        posicion_click (tuple): Coordenadas (x, y) del clic del ratón.
+        rects (dict): Diccionario con rectángulos para las opciones de nivel.
+
+    Returns:
+        tuple: Nuevo estado (str) y nuevo nivel seleccionado (str o None).
     """
     nuevo_estado = "NIVEL"
     nuevo_nivel = None
