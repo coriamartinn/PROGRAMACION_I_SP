@@ -362,3 +362,11 @@ def mostrar_selector_nivel(pantalla: pg.display) -> tuple:
         y += 100
 
     return rects["FACIL"], rects["MEDIO"], rects["DIFICIL"]
+
+def interfaz_nombre(pantalla, nombre_jugador):
+    pantalla.fill((0, 0, 0))
+    fuente = pg.font.SysFont("OCR A Extended", 50)
+    texto = fuente.render(f"Ingrese nombre (3 letras): {nombre_jugador}", True, (255, 255, 255))
+    rect = texto.get_rect(center=(512, 384))
+    pantalla.blit(texto, rect)
+

@@ -54,8 +54,7 @@ def crear_tablero_vacio(tamano: int) -> list:
     return tablero
 
 
-def es_posicion_valida(
-    tablero: list, fila: int, col: int, tamaño: int, orientacion: str
+def es_posicion_valida(tablero: list, fila: int, col: int, tamaño: int, orientacion: str
 ) -> bool:
     """
     Verifica si una posición y orientación dadas son válidas para colocar una nave en el tablero.
