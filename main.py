@@ -48,7 +48,7 @@ def main() -> None:
     click_procesado = False
 
     # CREACION DE IMAGEN -> (FONDO)
-    fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  #MODIFICAR FONDO
+    fondo = pg.image.load("estaticos/imagenes/fondo.jpg")  # MODIFICAR FONDO
     fondo = pg.transform.scale(fondo, DIMENSIONES)
 
     # BUCLE PRINCIPAL DEL JUEGO
@@ -60,7 +60,6 @@ def main() -> None:
 
             if estado == "NOMBRE":
                 estado, nombre_jugador = estado_nombre(pantalla, evento, nombre_jugador)
-
 
             # MANEJO DE CLICK IZQUIERDO PARA SABER QUE BOTON SE SELECCIONA
             if evento.type == pg.MOUSEBUTTONUP and evento.button == 1:
@@ -105,7 +104,7 @@ def main() -> None:
         match estado:
             case "MENU":
                 rect_jugar, rect_nivel, rect_puntajes, rect_salir, rect_musica = menu(
-                    pantalla, nivel_actual
+                    pantalla
                 )
             case "NOMBRE":
                 interfaz_nombre(pantalla, nombre_jugador)

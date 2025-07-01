@@ -7,7 +7,7 @@ from paquetes.tablero import *
 from paquetes.validates import *
 
 
-def menu(pantalla: pg.display, nivel_actual="FACIL"):
+def menu(pantalla: pg.display):
     """
     Esta funcion se encarga de dibujar en pantalla la interfaz del menu
     Args:
